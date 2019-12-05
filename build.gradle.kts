@@ -27,6 +27,9 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation("org.apache.poi:poi:4.1.1")
+    implementation("org.apache.poi:poi-ooxml:4.1.1")
+
+    testImplementation("org.assertj:assertj-core:3.14.0")
 
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
