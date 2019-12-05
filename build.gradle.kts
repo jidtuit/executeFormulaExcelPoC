@@ -20,6 +20,7 @@ application {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
 }
