@@ -1,26 +1,23 @@
 package org.jid.tests.executeformulaexcel;
 
-import static org.apache.poi.ss.usermodel.CellType.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelFormulaEvaluator {
+public class ExcelFormulaEvaluator implements AutoCloseable{
 
   private XSSFWorkbook wb;
   private FormulaEvaluator evaluator;
 
-  public static ExcelFormulaEvaluator load(Path path) throws IOException, InvalidFormatException {
+  public static ExcelFormulaEvaluator create(Path path) throws IOException, InvalidFormatException {
 
     if(path == null || !Files.exists(path)) {
       throw new IOException("File path must exist");
@@ -41,6 +38,7 @@ public class ExcelFormulaEvaluator {
 
     Optional<Double> resp= Optional.empty();
     if (cell!=null) {
+      // It can be solved with an if-else but I wanted to be explicit about the different types for this example
       switch (cell.getCellType()) {
         case NUMERIC:
           resp = Optional.of(cell.getNumericCellValue());
@@ -71,15 +69,16 @@ public class ExcelFormulaEvaluator {
     cell.setCellValue(value);
   }
 
-  public void recalculateAllFormulas() {
-    evaluator.evaluateAll();
-  }
-
-
 
   private ExcelFormulaEvaluator(XSSFWorkbook wb)  {
     this.wb = wb;
     this.evaluator = wb.getCreationHelper().createFormulaEvaluator();
   }
 
+
+  @Override
+  public void close() throws IOException {
+    if(wb != null)
+      wb.close();
+  }
 }
